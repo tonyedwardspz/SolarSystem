@@ -1,0 +1,114 @@
+/* 
+SASS developed CSS animation of the solar system
+Inspired by a tutorial in the HTML5 & CSS3 Genius Guide
+*/
+
+/* Reset */
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* Animations */
+@keyframes orbitsun{
+	from { transform:rotate(0deg); }
+	to { transform:rotate(360deg); }
+}
+
+@keyframes reverseorbitsun {
+	from {transform:rotate(0deg);}
+	to {transform:rotate(-360deg)}
+}
+
+/* Setup */
+
+#container{
+	background-image: url('../images/containerbg.jpg');
+}
+
+$planetName: sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto;
+$planetSize: 100px, 10px, 16px, 20px, 14px, 40px, 36px, 32px, 30px, 6px;
+$planetDistance: -50px, -80px, -110px, -150px, -185px, -240px, -300px, -360px, -420px, -470px;
+$planetOrbit: 300s, 12s, 18s, 26s, 31s, 41s, 48s, 65s, 79s, 100s;
+$planetDistanceOffset: 50px 50px, 80px 5px, 110px 8px, 150px 10px, 185px 7px, 240px 20px, 300px 18px, 360px 16px, 420px 15px, 470px 3px;
+
+@mixin posAbsolute($pos) {
+	position: absolute;
+	top: $pos;
+	left:$pos;
+}
+
+@mixin calcPlanets($size){
+	width: $size;
+	height: $size;
+	border-radius: ($size/2);
+	margin-top: ($size - ($size/2) - ($size/2) -($size/2));
+}
+
+@mixin distFromSun($distance){
+	margin-left: $distance;
+}
+
+@mixin planetAnimation($index){
+	animation-duration: nth( $planetOrbit, $index );
+	transform-origin: nth($planetDistanceOffset, $index);
+}
+
+
+#solarsystem {
+	position:relative;
+	margin:auto;
+	width:1000px;
+	height:1000px;
+	border-radius: 500px;
+	background-image: url('../images/background.gif');
+	border: 10px solid grey;
+
+	ol li{
+		display: block;
+		overflow: hidden;
+		text-indent: -10000000%;
+
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+		animation-name: orbitsun;
+
+		span{
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+			animation-name: reverseorbitsun;
+		}
+	}
+
+	@for $i from 1 to 11{
+
+		ol>li:nth-child(#{$i}) {
+			
+			@include posAbsolute(500px);
+			@include calcPlanets(nth($planetSize, $i));
+			@include distFromSun(nth($planetDistance, $i));
+
+			@include planetAnimation($i);
+			
+			background-image: url('../images/#{nth($planetName, $i)}.jpg');
+			@if ($i == 4){
+				overflow: visible;
+
+				li{
+					@include posAbsolute(10px);
+					@include calcPlanets(10px);
+					@include distFromSun(-30px);
+					transform-origin: 30px 5px;
+					animation-duration:6s;
+
+					span{
+						width: 10px;
+						height: 10px;
+						border-radius: 5px;
+						@include posAbsolute(0px);
+						display: block;
+						background-image: url('../images/moon.jpg');
+						animation-duration:6s;
+					}
+				}
+			}
+		}
+	}
+}
